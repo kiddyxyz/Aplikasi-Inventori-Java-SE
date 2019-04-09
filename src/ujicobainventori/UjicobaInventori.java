@@ -5,6 +5,7 @@
  */
 package ujicobainventori;
 
+import ujicobainventori.Frame.MainFrame;
 /**
  *
  * @author Kiddy
@@ -16,12 +17,9 @@ public class UjicobaInventori {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-//        MainFrame frame = new MainFrame();
-//        frame.setLocationRelativeTo(null);
-//        frame.setVisible(true);
-        
-        Koneksi con = new Koneksi();
-        con.open();
+        MainFrame frame = new MainFrame();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
     }
     
 }
