@@ -44,6 +44,56 @@ public class MainController {
         }
     }
     
+    public ResultSet getWithParameter(JTable table, Map map, String sql) {
+        try{
+            Koneksi koneksi = new Koneksi();
+            Connection con = koneksi.open();
+            
+            PreparedStatement ps = con.prepareStatement(sql);
+            
+            map.forEach((k,v) -> {
+                try {
+                    ps.setString((int) k, v.toString());
+                } catch (SQLException ex) {
+                    Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+            
+            ResultSet rs = ps.executeQuery();
+            table.setModel(DbUtils.resultSetToTableModel(rs)); 
+            return rs;
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+    
+    public ResultSet show(Map map, String sql){
+        try{
+            Koneksi koneksi = new Koneksi();
+            Connection con = koneksi.open();
+            
+            PreparedStatement ps = con.prepareStatement(sql);
+            
+            map.forEach((k,v) -> {
+                try {
+                    ps.setString((int) k, v.toString());
+                } catch (SQLException ex) {
+                    Logger.getLogger(MainController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+            
+             ResultSet rs = ps.executeQuery();
+             
+             return rs;
+        }
+        catch(Exception e){
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+    
     public boolean preparedStatement(Map map, String sql){
         try{
             Koneksi koneksi = new Koneksi();

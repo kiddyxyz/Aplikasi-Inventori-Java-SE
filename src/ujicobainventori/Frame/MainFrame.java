@@ -5,30 +5,36 @@
  */
 package ujicobainventori.Frame;
 
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import ujicobainventori.Controller.MainController;
+import ujicobainventori.Helper.Helper;
 
 /**
  *
  * @author Kiddy
  */
 public class MainFrame extends javax.swing.JFrame {
-    private MainController controller;
+    private final MainController controller;
+    private String product_id;
     
     /**
      * Creates new form MainFrame
      */
     public MainFrame() { 
         initComponents();
-        
         MainController mainController = new MainController();
         controller = mainController;
         
         loadTable();
+        clearForm();
     }
     
     private void loadTable(){
@@ -43,6 +49,8 @@ public class MainFrame extends javax.swing.JFrame {
         tf_stock.setText(null);
         cb_type.setSelectedIndex(0);
         dp_expired.setDate(null);
+        btn_update.setEnabled(false);
+        btn_delete.setEnabled(false);
     }
 
     /**
@@ -95,6 +103,11 @@ public class MainFrame extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tb_product.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tb_productMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tb_product);
 
         jLabel5.setText("Harga Barang");
@@ -102,6 +115,12 @@ public class MainFrame extends javax.swing.JFrame {
         tf_price.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 tf_priceActionPerformed(evt);
+            }
+        });
+
+        dp_expired.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                dp_expiredPropertyChange(evt);
             }
         });
 
@@ -215,42 +234,127 @@ public class MainFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_tf_priceActionPerformed
 
     private void btn_submitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_submitActionPerformed
-        // TODO add your handling code here:
-        String name = tf_name.getText();
-        String price = tf_price.getText();
-        String stock = tf_stock.getText();
-        String type = cb_type.getSelectedItem().toString();
-        
-        Date date = (Date) dp_expired.getDate();
-        SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
-        String expired = dt.format(date).toString();
-         
-        String sql = "INSERT INTO product (name, product_type, stock, "
-                + "price, expired) values (?,?,?,?,?)";
-        
-        Map<Integer, Object> map = new HashMap<>();
-        map.put(1, name);
-        map.put(2, type);
-        map.put(3, stock);
-        map.put(4, price);
-        map.put(5, expired);
-        
-        if(!controller.preparedStatement(map, sql)){
-            JOptionPane.showMessageDialog(null, "Gagal Menambahkan Data");
+        try {
+            // TODO add your handling code here:
+            String name = tf_name.getText();
+            String price = tf_price.getText();
+            String stock = tf_stock.getText();
+            String type = cb_type.getSelectedItem().toString();
+            
+            Helper helper = new Helper();
+            String expired = helper.parseDataToDatabase(dp_expired);
+            
+            String sql = "INSERT INTO product (name, product_type, stock, "
+                    + "price, expired) values (?,?,?,?,?)";
+            
+            Map<Integer, Object> map = new HashMap<>();
+            map.put(1, name);
+            map.put(2, type);
+            map.put(3, stock);
+            map.put(4, price);
+            map.put(5, expired);
+            
+            if(!controller.preparedStatement(map, sql)){
+                JOptionPane.showMessageDialog(null, "Gagal Menambahkan Data");
+            }
+            
+            clearForm();
+            loadTable();
+            JOptionPane.showMessageDialog(null, "Berhasil Menambahkan Data");
+        } catch (ParseException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        clearForm();
-        loadTable();
-        JOptionPane.showMessageDialog(null, "Berhasil Menambahkan Data");
     }//GEN-LAST:event_btn_submitActionPerformed
 
     private void btn_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_updateActionPerformed
-        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+            String name = tf_name.getText();
+            String price = tf_price.getText();
+            String stock = tf_stock.getText();
+            String type = cb_type.getSelectedItem().toString();
+            
+            Helper helper = new Helper();
+            String expired = helper.parseDataToDatabase(dp_expired);
+            
+            String sql = "UPDATE product SET name = ?, product_type = ?, "
+                    + "stock = ?, price = ?, expired = ? WHERE id = ?";
+            
+            Map<Integer, Object> map = new HashMap<>();
+            map.put(1, name);
+            map.put(2, type);
+            map.put(3, stock);
+            map.put(4, price);
+            map.put(5, expired);
+            map.put(6, this.product_id);
+            
+            if(controller.preparedStatement(map, sql)){
+                clearForm();
+                loadTable();
+                JOptionPane.showMessageDialog(null, "Berhasil Merubah Data");
+            }
+            else{
+                JOptionPane.showMessageDialog(null, "Gagal Merubah Data");
+            }
+            
+        } catch (ParseException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }//GEN-LAST:event_btn_updateActionPerformed
 
     private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
-        // TODO add your handling code here:
+        try {
+            // TODO add your handling code here:
+            Helper helper = new Helper();
+            String expired = helper.parseDataToDatabase(dp_expired);
+            
+            String sql = "DELETE FROM product WHERE id = ?";
+            
+            Map<Integer, Object> map = new HashMap<>();
+            map.put(1, this.product_id);
+            
+            if(controller.preparedStatement(map, sql)){
+                clearForm();
+                loadTable();
+                JOptionPane.showMessageDialog(null, "Berhasil Menghapus Data");
+            }
+            else{
+                JOptionPane.showMessageDialog(null, "Gagal Menghapus Data");
+            }
+        } catch (ParseException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_deleteActionPerformed
+
+    private void tb_productMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tb_productMouseClicked
+        try {                                        
+            // TODO add your handling code here:
+            Helper helper = new Helper();
+            String id = helper.getValueRows(tb_product, 0);
+            String name = helper.getValueRows(tb_product, 1);
+            String type = helper.getValueRows(tb_product, 2);
+            String stock = helper.getValueRows(tb_product, 3);
+            String price = helper.getValueRows(tb_product, 4);
+            String expired = helper.getValueRows(tb_product, 5);
+            
+            btn_update.setEnabled(true);
+            btn_delete.setEnabled(true);
+            
+            this.product_id = id;
+            tf_name.setText(name);
+            cb_type.setSelectedItem(type);
+            tf_stock.setText(stock);
+            tf_price.setText(price);
+            dp_expired.setDate(new Date(helper.getParsedDate(expired)));
+        } catch (ParseException ex) {
+            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_tb_productMouseClicked
+
+    private void dp_expiredPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_dp_expiredPropertyChange
+        // TODO add your handling code here:
+    }//GEN-LAST:event_dp_expiredPropertyChange
 
     /**
      * @param args the command line arguments
