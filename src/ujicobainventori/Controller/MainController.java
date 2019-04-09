@@ -44,7 +44,7 @@ public class MainController {
         }
     }
     
-    public ResultSet getWithParameter(JTable table, Map map, String sql) {
+    public void getWithParameter(JTable table, Map map, String sql) {
         try{
             Koneksi koneksi = new Koneksi();
             Connection con = koneksi.open();
@@ -60,12 +60,10 @@ public class MainController {
             });
             
             ResultSet rs = ps.executeQuery();
-            table.setModel(DbUtils.resultSetToTableModel(rs)); 
-            return rs;
+            table.setModel(DbUtils.resultSetToTableModel(rs));
         }
         catch(Exception e){
             System.out.println(e.getMessage());
-            return null;
         }
     }
     
