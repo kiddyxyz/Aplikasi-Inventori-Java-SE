@@ -32,7 +32,7 @@ public class Helper {
         return formatted;
     }
     
-    public String parseDataToDatabase(JXDatePicker dp) throws ParseException{
+    public String parseDataToDatabase(JXDatePicker dp){
         Date date = (Date) dp.getDate();
         SimpleDateFormat dt = new SimpleDateFormat("yyyy-MM-dd");
         String parsedDate = dt.format(date);

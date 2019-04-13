@@ -293,12 +293,11 @@ public class MainFrame extends javax.swing.JFrame {
             if(!controller.preparedStatement(map, sql)){
                 JOptionPane.showMessageDialog(null, "Gagal Menambahkan Data");
             }
-            
             clearForm();
             loadTable();
             JOptionPane.showMessageDialog(null, "Berhasil Menambahkan Data");
-        } catch (ParseException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
         }
     }//GEN-LAST:event_btn_submitActionPerformed
 
@@ -333,8 +332,8 @@ public class MainFrame extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Gagal Merubah Data");
             }
             
-        } catch (ParseException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
         }
         
     }//GEN-LAST:event_btn_updateActionPerformed
@@ -358,8 +357,8 @@ public class MainFrame extends javax.swing.JFrame {
             else{
                 JOptionPane.showMessageDialog(null, "Gagal Menghapus Data");
             }
-        } catch (ParseException ex) {
-            Logger.getLogger(MainFrame.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
         }
     }//GEN-LAST:event_btn_deleteActionPerformed
 
